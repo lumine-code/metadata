@@ -7,7 +7,6 @@ Inspect metadata of the current document.
 - **Document properties**: inspect text, notebook, image and PDF properties supplied by their pane items.
 - **Saved file details**: distinguish the saved file's path, size and timestamps from the current document's state.
 - **Movable inspector**: keep metadata in a normal workspace tab, initially in the right dock.
-- **Breadcrumb action**: open the inspector for a specific document using its information icon.
 - **Live updates**: refresh visible metadata when the document changes and cancel obsolete requests.
 
 ![Inspect the current document alongside its saved file properties.](.github/demo.png)
@@ -26,7 +25,7 @@ Commands available in `lumine-workspace`:
 
 ## Usage
 
-The inspector follows the active document in the workspace center, including documents in additional windows. Focusing the inspector preserves the document being inspected. Move its tab between the left and right docks using the normal pane commands. Closing it releases its subscriptions; reopening creates a fresh inspector.
+The inspector follows the active document in the workspace center, including documents in additional windows. Focusing a dock preserves the center document being inspected. Move the inspector's tab between the left and right docks using the normal pane commands. Closing it releases its subscriptions; reopening creates a fresh inspector. When the active center pane is empty, the inspector clears its contents.
 
 The File on Disk section describes the saved file. Other sections describe the current document and may include changes that have not yet been saved. A document without a path still exposes its own properties. Items can implement the core `getMetadata()` and `onDidChangeMetadata()` pane item protocol without registering a service.
 
@@ -48,7 +47,6 @@ Add this to your stylesheet to adjust the inspector's spacing:
 ## Services
 
 - [`metadata`](docs/metadata.md): provided to packages that open the inspector for a specific pane item.
-- `breadcrumbs.actions`: consumed to contribute the information action to document breadcrumbs.
 - `background-tips.provider`: provided to show a tip about inspecting document properties.
 
 ## Contributing

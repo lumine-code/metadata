@@ -49,13 +49,6 @@
       }
     }
   },
-  "consumedServices": {
-    "breadcrumbs.actions": {
-      "versions": {
-        "^1.0.0": "consumeBreadcrumbActions"
-      }
-    }
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.13.0",

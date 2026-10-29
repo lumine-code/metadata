@@ -409,26 +409,58 @@ describe("Metadata inspector", () => {
     main = (await lumine.packages.activatePackage("metadata")).mainModule;
   });
 
-  it("contributes an action for its exact item and disposes the service edge", async () => {
+  it("activates an explicitly requested center item before following the active center", async () => {
     const first = await open({ value: "First" });
     const second = await open({ value: "Second" });
-    const registration = { dispose: jasmine.createSpy("dispose action") };
-    const actions = { addAction: jasmine.createSpy("addAction").and.returnValue(registration) };
-    const edge = main.consumeBreadcrumbActions(actions);
-    const action = actions.addAction.calls.mostRecent().args[0];
-    expect(action.icon).toBe("info");
-    expect(action.getState({ item: first }).visible).toBeTrue();
-    await action.didClick({
-      item: first,
-      pane: lumine.workspace.paneForItem(first),
-      window: lumine.workspace.getMainWindow(),
-      document,
-    });
-    expect(main.view.source).toBe(first);
+    const secondPane = lumine.workspace.paneForItem(second).splitRight();
+    await lumine.workspace.movePaneItem(second, { targetPane: secondPane });
     expect(lumine.workspace.getCenter().getActivePaneItem()).toBe(second);
-    expect(action.getState({ item: first }).pressed).toBeTrue();
-    edge.dispose();
-    expect(registration.dispose).toHaveBeenCalledTimes(1);
+    await main.provideMetadata().showForItem(first);
+    expect(main.view.source).toBe(first);
+    expect(lumine.workspace.getCenter().getActivePaneItem()).toBe(first);
+    secondPane.activate();
+    expect(main.view.source).toBe(second);
+  });
+
+  it("keeps inspecting the active center item when another dock receives focus", async () => {
+    const item = await open({ value: "Center document" });
+    const dockItem = makeItem({ value: "Dock document" });
+    dockItem.getDefaultLocation = () => "bottom";
+    items.push(dockItem);
+    await lumine.workspace.open(dockItem, { location: "bottom" });
+    const view = await show(item);
+    lumine.workspace.paneForItem(dockItem).activate();
+    dockItem.element.focus();
+    expect(lumine.workspace.getActivePaneItem()).toBe(dockItem);
+    expect(lumine.workspace.getCenter().getActivePaneItem()).toBe(item);
+    expect(view.source).toBe(item);
+    expect(main.commandItem({ context: { documentItem: dockItem } })).toBe(item);
+    await main.provideMetadata().showForItem(dockItem);
+    expect(view.source).toBe(item);
+    expect(dockItem.getMetadata).not.toHaveBeenCalled();
+  });
+
+  it("does not inspect an unowned item supplied to the metadata service", async () => {
+    const item = await open({ value: "Active center document" });
+    const unowned = makeItem({ value: "Unowned document" });
+    items.push(unowned);
+    const view = await show(unowned);
+    expect(view.source).toBe(item);
+    expect(view.element.textContent).toContain("Active center document");
+    expect(unowned.getMetadata).not.toHaveBeenCalled();
+  });
+
+  it("clears a live source when it leaves an empty active center pane", async () => {
+    const item = await open();
+    item.getAllowedLocations = () => ["center", "bottom"];
+    const view = await show(item);
+    await lumine.workspace.movePaneItem(item, {
+      targetPane: lumine.workspace.getBottomDock().getActivePane(),
+    });
+    expect(item.destroyed).toBeFalse();
+    expect(lumine.workspace.getCenter().getActivePaneItem()).toBeUndefined();
+    expect(view.source).toBeNull();
+    expect(view.element.textContent).toContain("Open a document");
   });
 
   it("follows an editor detached after the inspector started observing", async () => {

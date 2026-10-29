@@ -33,7 +33,7 @@ interface MetadataService {
 }
 ```
 
-`showForItem()` opens or reveals the inspector and selects the supplied pane item as its source. It resolves to the inspector, or null when its package generation has retired. `focus` defaults to false. A request with `focus: true` focuses the inspector only while the invoking presentation retains its original focus during preparation. Fetching metadata never changes focus.
+`showForItem()` opens or reveals the inspector for the active pane item in the workspace center. When the supplied item belongs to a center pane, it synchronously activates that pane and item before opening the inspector. A dock item or an item outside this workspace cannot become the source; those requests show the current center item instead. It resolves to the inspector, or null when its package generation has retired. `focus` defaults to false. A request with `focus: true` focuses the inspector only while the invoking presentation retains its original focus during preparation. Fetching metadata never changes focus.
 
 The supplied pane item may implement the core metadata protocol or expose only `getPath()`. The inspector reads saved file details independently of the item's current document properties. The service does not add metadata to another package's item; the item's own `getMetadata()` owns those sections.
 
@@ -58,7 +58,7 @@ module.exports = {
 
 ## Behavior
 
-The inspector follows subsequent active document changes in the workspace center, ignoring its own activation. Requests are lazy while hidden and use an AbortSignal when querying item metadata. Source changes, document invalidations and closure cancel the previous request; late responses cannot replace newer data. The inspector is a serializable pane item allowed in the left and right docks, with the right dock as its default location. It supports normal movement between those docks and normal closing behavior.
+The inspector always follows the active pane item in the workspace center. Focusing docks does not replace that source, and an empty active center pane clears the inspector. Requests are lazy while hidden and use an AbortSignal when querying item metadata. Source changes, document invalidations and closure cancel the previous request; late responses cannot replace newer data. The inspector is a serializable pane item allowed in the left and right docks, with the right dock as its default location. It supports normal movement between those docks and normal closing behavior.
 
 ## Teardown
 
