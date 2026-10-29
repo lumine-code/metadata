@@ -2,12 +2,12 @@
   "title": "metadata",
   "description": "Inspect the current document alongside its saved file properties.",
   "recordedOn": "2026-10-29",
-  "sourceRevision": "17e742ecced6d6c450c0934f04511001561e7ae5",
+  "sourceRevision": "d3f23e1ba5d27d3ac2a21aa174d436901189f00a",
   "themeSourceRevision": "543b6786cc6eed20334c381eb322fc06e00a67b0",
   "mode": "normal",
   "fontSettings": "default",
   "scenario": "demo.js",
-  "recipeHash": "0d370f2679986c1c4fd9cd75a1b533b8453d6d077a18de867f9a8d2e6bffe33b",
+  "recipeHash": "9ba3c17289dd06d8ebc7327265242fb624cec58536fa835f08aec56ad4e1c747",
   "environment": {
     "platform": "win32",
     "arch": "x64",
@@ -24,22 +24,17 @@
   "privacy": { "version": 1, "location": "neutral", "textChecked": true },
   "sources": {
     "editor": {
-      "revision": "939ed09965c1cc395817f102bc726e8a6f93f14d",
+      "revision": "b569c426733b65e6e7ea16b00430f701a289996e",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "package": {
-      "revision": "17e742ecced6d6c450c0934f04511001561e7ae5",
+      "revision": "d3f23e1ba5d27d3ac2a21aa174d436901189f00a",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "metadata": {
-      "revision": "17e742ecced6d6c450c0934f04511001561e7ae5",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
-    },
-    "breadcrumbs": {
-      "revision": "59a54f4b09c9eb07e377c21e1b2180a9eb787cb8",
+      "revision": "d3f23e1ba5d27d3ac2a21aa174d436901189f00a",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
@@ -66,7 +61,7 @@
       "label": "Inspect the current document alongside its saved file properties.",
       "width": 1200,
       "height": 760,
-      "sha256": "a2d27a597b1e96f9286392251d8a7b91899f6293527ed2857cc9e536a40fc820"
+      "sha256": "c8d1ad371d3191ce8b4b847411b9cc690767bdfb90d3b29588f248a1febbe0fd"
     }
   ]
 }
