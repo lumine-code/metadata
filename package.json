@@ -1,0 +1,67 @@
+{
+  "name": "metadata",
+  "author": "lumine-code",
+  "version": "1.0.0",
+  "description": "Inspect metadata of the current document.",
+  "keywords": [
+    "properties",
+    "inspector",
+    "encoding",
+    "dimensions",
+    "document"
+  ],
+  "repository": "https://github.com/lumine-code/metadata",
+  "bugs": {
+    "url": "https://github.com/lumine-code/metadata/issues"
+  },
+  "license": "MIT",
+  "main": "./lib/main",
+  "files": [
+    "docs",
+    "lib",
+    "menus",
+    "spec",
+    "styles",
+    "LICENSE"
+  ],
+  "engines": {
+    "lumine": "^1.0.0",
+    "node": ">=24"
+  },
+  "deserializers": {
+    "metadata/MetadataView": "deserializeMetadataView"
+  },
+  "scripts": {
+    "test": "lumine --test spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "providedServices": {
+    "metadata": {
+      "versions": {
+        "1.0.0": "provideMetadata"
+      }
+    },
+    "background-tips.provider": {
+      "versions": {
+        "1.0.0": "provideBackgroundTips"
+      }
+    }
+  },
+  "consumedServices": {
+    "breadcrumbs.actions": {
+      "versions": {
+        "^1.0.0": "consumeBreadcrumbActions"
+      }
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.5.0",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10"
+  }
+}

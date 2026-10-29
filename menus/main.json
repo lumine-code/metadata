@@ -1,0 +1,39 @@
+{
+  "menu": [
+    {
+      "label": "View",
+      "submenu": [
+        {
+          "label": "Open or Focus View",
+          "submenu": [
+            {
+              "label": "Metadata",
+              "command": "metadata:toggle-focus",
+              "group": "panels",
+              "order": 20
+            }
+          ]
+        },
+        {
+          "label": "Toggle View",
+          "submenu": [
+            { "label": "Metadata", "command": "metadata:toggle", "group": "panels", "order": 20 }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "Metadata",
+          "submenu": [
+            { "label": "Show", "command": "metadata:show" },
+            { "label": "Toggle", "command": "metadata:toggle" },
+            { "label": "Toggle Focus", "command": "metadata:toggle-focus" }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+.metadata {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 220px;
+  padding: 16px;
+  overflow: auto;
+  color: var(--text-color);
+  background: var(--pane-item-background-color);
+  user-select: text;
+}
+
+.metadata .metadata-document-title {
+  margin: 0 0 20px;
+  font-size: 1.15em;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.metadata .metadata-section + .metadata-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--base-border-color);
+}
+
+.metadata .metadata-section h2 {
+  margin: 0 0 12px;
+  color: var(--text-color-highlight);
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.metadata .metadata-section dl {
+  display: grid;
+  grid-template-columns: minmax(80px, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+  gap: 8px 16px;
+  margin: 0;
+}
+
+.metadata .metadata-section dt {
+  color: var(--text-color-subtle);
+  font-weight: normal;
+  overflow-wrap: anywhere;
+}
+
+.metadata .metadata-section dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.metadata .metadata-status {
+  margin: 16px 0 0;
+}
