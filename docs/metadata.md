@@ -58,7 +58,7 @@ module.exports = {
 
 ## Behavior
 
-The inspector follows subsequent active document changes in the workspace center, ignoring its own activation. Requests are lazy while hidden and use an AbortSignal when querying item metadata. Source changes, document invalidations and closure cancel the previous request; late responses cannot replace newer data. The inspector is a serializable pane item with normal movement and closing behavior.
+The inspector follows subsequent active document changes in the workspace center, ignoring its own activation. Requests are lazy while hidden and use an AbortSignal when querying item metadata. Source changes, document invalidations and closure cancel the previous request; late responses cannot replace newer data. The inspector is a serializable pane item allowed in the left and right docks, with the right dock as its default location. It supports normal movement between those docks and normal closing behavior.
 
 ## Teardown
 

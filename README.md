@@ -26,7 +26,7 @@ Commands available in `lumine-workspace`:
 
 ## Usage
 
-The inspector follows the active document in the workspace center, including documents in additional windows. Focusing the inspector preserves the document being inspected. Move its tab into another dock or the center using the normal pane commands. Closing it releases its subscriptions; reopening creates a fresh inspector.
+The inspector follows the active document in the workspace center, including documents in additional windows. Focusing the inspector preserves the document being inspected. Move its tab between the left and right docks using the normal pane commands. Closing it releases its subscriptions; reopening creates a fresh inspector.
 
 The File on Disk section describes the saved file. Other sections describe the current document and may include changes that have not yet been saved. A document without a path still exposes its own properties. Items can implement the core `getMetadata()` and `onDidChangeMetadata()` pane item protocol without registering a service.
 

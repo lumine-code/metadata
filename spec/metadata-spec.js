@@ -127,7 +127,7 @@ describe("Metadata inspector", () => {
     const item = await open();
     const view = await show(item);
     expect(lumine.workspace.paneContainerForItem(view)).toBe(lumine.workspace.getRightDock());
-    expect(view.getAllowedLocations()).toEqual(["right", "left", "bottom", "center"]);
+    expect(view.getAllowedLocations()).toEqual(["right", "left"]);
     expect(view.serialize()).toEqual({ deserializer: "metadata/MetadataView" });
     expect(main.deserializeMetadataView()).toBe(view);
     expect(view.getSingletonKey()).toBe("lumine://metadata");
@@ -300,21 +300,38 @@ describe("Metadata inspector", () => {
     expect(view.element.textContent).toContain("Open a document");
   });
 
-  it("moves the same pane item and root into the center and back", async () => {
+  it("moves the same pane item and root between the side docks", async () => {
     const item = await open();
     const view = await show(item);
     const element = view.element;
-    const centerPane = lumine.workspace.paneForItem(item);
-    await lumine.workspace.movePaneItem(view, { targetPane: centerPane });
-    expect(lumine.workspace.paneForItem(view)).toBe(centerPane);
+    const leftPane = lumine.workspace.getLeftDock().getActivePane();
+    const rightPane = lumine.workspace.paneForItem(view);
+    await lumine.workspace.movePaneItem(view, { targetPane: leftPane });
+    expect(lumine.workspace.paneForItem(view)).toBe(leftPane);
     expect(view.source).toBe(item);
     expect(view.element).toBe(element);
     expect(main.getView()).toBe(view);
     await lumine.workspace.movePaneItem(view, {
-      targetPane: lumine.workspace.getBottomDock().getActivePane(),
+      targetPane: rightPane,
     });
     expect(view.element).toBe(element);
     expect(view.isDestroyed()).toBeFalse();
+  });
+
+  it("rejects movement into the center and bottom dock without changing ownership", async () => {
+    const item = await open();
+    const view = await show(item);
+    const pane = lumine.workspace.paneForItem(view);
+    const element = view.element;
+    for (const targetPane of [
+      lumine.workspace.paneForItem(item),
+      lumine.workspace.getBottomDock().getActivePane(),
+    ]) {
+      await expectAsync(lumine.workspace.movePaneItem(view, { targetPane })).toBeRejected();
+      expect(lumine.workspace.paneForItem(view)).toBe(pane);
+      expect(view.element).toBe(element);
+      expect(view.isDestroyed()).toBeFalse();
+    }
   });
 
   it("creates a fresh inspector after normal pane closure", async () => {
@@ -390,22 +407,6 @@ describe("Metadata inspector", () => {
     expect(view.isDestroyed()).toBeTrue();
     expect(lumine.workspace.paneForItem(view)).toBeUndefined();
     main = (await lumine.packages.activatePackage("metadata")).mainModule;
-  });
-
-  it("renders an adopted inspector using its current presentation document", async () => {
-    const item = await open();
-    const view = await show(item);
-    const element = view.element;
-    await lumine.workspace.movePaneItem(view, { targetPane: lumine.workspace.paneForItem(item) });
-    const extra = await lumine.workspace.detachItem(view);
-    expect(view.element).toBe(element);
-    expect(view.element.ownerDocument).toBe(extra.getDocument());
-    item.setValue("Changed in another presentation");
-    await until(() => view.element.textContent.includes("Changed in another presentation"));
-    expect(view.element.querySelector("h1").ownerDocument).toBe(extra.getDocument());
-    await lumine.workspace.attachWindow(extra);
-    expect(view.element.ownerDocument).toBe(document);
-    expect(view.source).toBe(item);
   });
 
   it("contributes an action for its exact item and disposes the service edge", async () => {
