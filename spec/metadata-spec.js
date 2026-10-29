@@ -445,4 +445,18 @@ describe("Metadata inspector", () => {
     await lumine.workspace.attachWindow(extra);
     expect(view.source).toBe(editor);
   });
+
+  it("focuses the physical presentation when moving between the inspector and its source", async () => {
+    const item = await open();
+    const view = await show(item);
+    const extra = await lumine.workspace.detachPane(lumine.workspace.paneForItem(item));
+    const mainFocus = spyOn(lumine.workspace.getMainWindow(), "focus");
+    const sourceFocus = spyOn(extra, "focus");
+    view.focus();
+    expect(mainFocus).toHaveBeenCalledTimes(1);
+    view.unfocus();
+    expect(sourceFocus).toHaveBeenCalledTimes(1);
+    expect(view.source).toBe(item);
+    await lumine.workspace.attachWindow(extra);
+  });
 });
