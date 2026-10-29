@@ -6,7 +6,7 @@
   padding: 16px;
   overflow: auto;
   color: var(--text-color);
-  background: var(--pane-item-background-color);
+  background-color: var(--tool-panel-background-color);
   user-select: text;
 }
 
