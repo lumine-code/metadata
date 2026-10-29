@@ -358,6 +358,7 @@ describe("Metadata inspector", () => {
   });
 
   it("does not restore focus after the user leaves an asynchronously opening inspector", async () => {
+    spyOn(lumine.workspace, "getFocusedWindow").and.returnValue(lumine.workspace.getMainWindow());
     const item = await open();
     const other = await open({ value: "Another document" });
     lumine.workspace.paneForItem(item).activateItem(item);
@@ -383,6 +384,55 @@ describe("Metadata inspector", () => {
     gate.resolve();
     await opening;
     expect(document.activeElement).toBe(other.element);
+  });
+
+  it("does not reclaim operating system focus when its opening window loses focus", async () => {
+    const item = await open();
+    item.element.focus();
+    const host = lumine.workspace.getMainWindow();
+    let focusedHost = host;
+    spyOn(lumine.workspace, "getFocusedWindow").and.callFake(() => focusedHost);
+    const hostFocus = spyOn(host, "focus");
+    const view = main.getView();
+    const viewFocus = spyOn(view, "focus").and.callThrough();
+    const gate = deferred();
+    const arrived = deferred();
+    const originalOpen = lumine.workspace.open.bind(lumine.workspace);
+    spyOn(lumine.workspace, "open").and.callFake(async (candidate, options) => {
+      const result = await originalOpen(candidate, options);
+      if (candidate === view) {
+        arrived.resolve();
+        await gate.promise;
+      }
+      return result;
+    });
+    const opening = main.showForItem(item, { focus: true });
+    await arrived.promise;
+    const pane = lumine.workspace.paneForItem(view);
+    const activatePane = spyOn(pane, "activate").and.callThrough();
+    const focusedElement = host.getDocument().activeElement;
+    expect(focusedElement).toBe(item.element);
+    focusedHost = null;
+    gate.resolve();
+    await opening;
+    expect(host.getDocument().activeElement).toBe(focusedElement);
+    expect(viewFocus).not.toHaveBeenCalled();
+    expect(hostFocus).not.toHaveBeenCalled();
+    expect(activatePane).not.toHaveBeenCalled();
+  });
+
+  it("focuses the inspector when the initiating physical window retains focus", async () => {
+    const item = await open();
+    item.element.focus();
+    const host = lumine.workspace.getMainWindow();
+    spyOn(lumine.workspace, "getFocusedWindow").and.returnValue(host);
+    const hostFocus = spyOn(host, "focus");
+    const view = main.getView();
+    const viewFocus = spyOn(view, "focus").and.callThrough();
+    expect(await main.showForItem(item, { focus: true })).toBe(view);
+    expect(viewFocus).toHaveBeenCalledTimes(1);
+    expect(hostFocus).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(view.element);
   });
 
   it("retires an inspector while its workspace open operation is pending", async () => {
