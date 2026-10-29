@@ -10,6 +10,8 @@ Inspect metadata of the current document.
 - **Breadcrumb action**: open the inspector for a specific document using its information icon.
 - **Live updates**: refresh visible metadata when the document changes and cancel obsolete requests.
 
+![Inspect the current document alongside its saved file properties.](.github/demo.png)
+
 ## Installation
 
 This package is bundled with Lumine. To install another revision, search for `metadata` in the Install pane of the Lumine settings, or run `lumine --install lumine-code/metadata`.
