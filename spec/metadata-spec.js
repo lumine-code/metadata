@@ -135,6 +135,47 @@ describe("Metadata inspector", () => {
     expect(lumine.workspace.getModalPanels().some((panel) => panel.getItem() === view)).toBeFalse();
   });
 
+  it("shows background text for no document or metadata and restores it after source destruction", async () => {
+    const view = main.getView();
+    await view.show();
+    await until(() => !view.dirty && !view.loading);
+    const empty = () => view.element.querySelector(".panel-empty-state");
+    expect(empty().textContent).toBe("Open a document to inspect its metadata.");
+    const item = await open({ getMetadata: () => [] });
+    await show(item);
+    expect(empty().textContent).toBe("No metadata available for this document.");
+    expect(view.element.querySelector(".metadata-document-title").textContent).toBe(
+      "Example document",
+    );
+    item.getMetadata.and.returnValue(section("Available metadata"));
+    item.invalidate();
+    await until(() => view.element.textContent.includes("Available metadata"));
+    expect(empty()).toBeNull();
+    item.destroy();
+    expect(empty().textContent).toBe("Open a document to inspect its metadata.");
+  });
+
+  it("keeps loading and failure statuses separate from the empty background", async () => {
+    const gate = deferred();
+    const item = await open({ getMetadata: () => gate.promise });
+    const view = await main.showForItem(item);
+    await until(() => item.getMetadata.calls.count() === 1 && view.loading);
+    expect(view.element.querySelector(".panel-empty-state")).toBeNull();
+    expect(view.element.querySelector(".metadata-status").textContent).toBe("Loading metadata…");
+    gate.resolve([]);
+    await until(() => !view.loading);
+    expect(view.element.querySelector(".panel-empty-state").textContent).toBe(
+      "No metadata available for this document.",
+    );
+    item.getMetadata.and.callFake(() => Promise.reject(new Error("Read failed")));
+    item.invalidate();
+    await until(() => Boolean(view.error));
+    expect(view.element.querySelector(".panel-empty-state")).toBeNull();
+    expect(view.element.querySelector(".metadata-status").textContent).toBe(
+      "Document metadata could not be loaded.",
+    );
+  });
+
   it("queries metadata only while the inspector is visible", async () => {
     const item = await open();
     const view = main.getView();
