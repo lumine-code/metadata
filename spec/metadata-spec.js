@@ -135,6 +135,42 @@ describe("Metadata inspector", () => {
     expect(lumine.workspace.getModalPanels().some((panel) => panel.getItem() === view)).toBeFalse();
   });
 
+  it("scrolls readonly metadata through the shared navigation binding and excludes controls", async () => {
+    const item = await open();
+    const view = await show(item);
+    const element = view.element;
+    const reveal = spyOn(lumine.scrollbars, "reveal");
+    item.setValue("Updated metadata");
+    await until(() => element.textContent.includes("Updated metadata"));
+    expect(reveal).not.toHaveBeenCalled();
+    const filler = document.createElement("div");
+    filler.style.minHeight = "1200px";
+    element.append(filler);
+    element.style.height = "120px";
+    element.style.maxHeight = "120px";
+    element.scrollTop = 0;
+    lumine.keymaps.loadBundledKeymaps();
+    element.focus();
+    const key = new KeyboardEvent("keydown", { key: "ArrowDown", cancelable: true });
+    Object.defineProperty(key, "target", { value: element });
+    lumine.keymaps.handleKeyboardEvent(key);
+    expect(key.defaultPrevented).toBeTrue();
+    expect(element.scrollTop).toBeGreaterThan(0);
+    expect(reveal).toHaveBeenCalledOnceWith(element);
+    const button = element.querySelector("button");
+    expect(lumine.commands.canDispatch(button, "core:move-down")).toBeFalse();
+    await lumine.commands.dispatch(button, "core:move-down");
+    expect(reveal).toHaveBeenCalledTimes(1);
+  });
+
+  it("releases readonly navigation when the inspector closes", async () => {
+    const view = await show(await open());
+    const element = view.element;
+    expect(lumine.scrollbars.navigationBindings.has(element)).toBeTrue();
+    await lumine.workspace.paneForItem(view).destroyItem(view, true);
+    expect(lumine.scrollbars.navigationBindings.has(element)).toBeFalse();
+  });
+
   it("shows background text for no document or metadata and restores it after source destruction", async () => {
     const view = main.getView();
     await view.show();
